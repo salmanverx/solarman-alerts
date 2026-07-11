@@ -222,19 +222,19 @@ def main():
         return
 
     if old_state.get("grid_ok", True) and not grid_ok_new:
-        notify(f"Grid power is GONE (relay status: {readings['grid_status']})", priority="urgent", tags="rotating_light")
+        notify("Grid power is out - running on battery backup", priority="urgent", tags="rotating_light")
     elif not old_state.get("grid_ok", True) and grid_ok_new:
-        notify("Grid power RESTORED", priority="default", tags="white_check_mark")
+        notify("Grid power is back", priority="default", tags="white_check_mark")
 
     if old_voltage_ok and not voltage_ok_new:
-        notify(f"Low grid voltage: {voltage} V (below {LOW_VOLTAGE_TRIGGER} V)", priority="high", tags="warning")
+        notify(f"Grid voltage is low: {round(voltage)}V (normal is above {round(LOW_VOLTAGE_TRIGGER)}V)", priority="high", tags="warning")
     elif not old_voltage_ok and voltage_ok_new:
-        notify(f"Grid voltage back to normal: {voltage} V", priority="default", tags="white_check_mark")
+        notify(f"Grid voltage is back to normal: {round(voltage)}V", priority="default", tags="white_check_mark")
 
     if old_zone != "low" and new_zone == "low":
-        notify(f"Battery SOC dropped to {readings['battery_soc_pct']}% (<=50%)", priority="default", tags="battery")
+        notify(f"Battery is at {round(readings['battery_soc_pct'])}% - half empty", priority="default", tags="battery")
     if old_zone != "full" and new_zone == "full":
-        notify("Battery fully charged (100%)", priority="default", tags="battery")
+        notify("Battery is fully charged (100%)", priority="default", tags="battery")
 
     save_state(new_state)
 
