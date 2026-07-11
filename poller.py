@@ -33,6 +33,7 @@ CONFIG_PATH = os.path.join(HERE, "solarman_config.json")
 LOW_VOLTAGE_TRIGGER = 200.0
 LOW_VOLTAGE_RECOVER = 205.0  # small hysteresis so it doesn't flap right at the line
 BAD_STREAK_TO_ALERT = 2  # require 2 consecutive bad polls before firing (avoid single-sample noise)
+CRITICAL_SOC_THRESHOLD = 30.0
 
 WANTED_KEYS = {
     "GRID_RELAY_ST1": "grid_status",
@@ -175,6 +176,8 @@ def save_state(state):
 def soc_zone(soc):
     if soc is None:
         return "unknown"
+    if soc <= CRITICAL_SOC_THRESHOLD:
+        return "critical"
     if soc <= 50:
         return "low"
     if soc >= 100:
@@ -237,6 +240,12 @@ def main():
 
     if old_zone != "low" and new_zone == "low":
         notify(f"Battery is at {round(readings['battery_soc_pct'])}% - half empty", priority="default", tags="battery")
+    if old_zone != "critical" and new_zone == "critical":
+        notify(
+            f"Battery is severely low at {round(readings['battery_soc_pct'])}% - take action now",
+            priority="urgent",
+            tags="rotating_light,battery",
+        )
     if old_zone != "full" and new_zone == "full":
         notify("Battery is fully charged (100%)", priority="default", tags="battery")
 
