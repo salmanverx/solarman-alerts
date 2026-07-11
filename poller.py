@@ -183,6 +183,10 @@ def soc_zone(soc):
 
 
 def main():
+    if os.environ.get("TEST_ALERT", "").lower() == "true":
+        notify("Test alert - notifications are working!", priority="default", tags="test_tube")
+        return
+
     creds = load_credentials()
     readings = fetch_readings(creds)
     print(json.dumps(readings, indent=2))

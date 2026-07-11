@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: '*/5 * * * *'
   workflow_dispatch:
+    inputs:
+      test_alert:
+        description: 'Send a test ntfy notification only (skip real polling)'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -25,6 +31,7 @@ jobs:
           SOLARMAN_APP_ID: ${{ secrets.SOLARMAN_APP_ID }}
           SOLARMAN_APP_SECRET: ${{ secrets.SOLARMAN_APP_SECRET }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          TEST_ALERT: ${{ inputs.test_alert }}
         run: python poller.py
 
       - name: Commit updated state
