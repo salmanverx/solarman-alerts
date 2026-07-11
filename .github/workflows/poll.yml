@@ -24,6 +24,7 @@ jobs:
           SOLARMAN_PASSWORD: ${{ secrets.SOLARMAN_PASSWORD }}
           SOLARMAN_APP_ID: ${{ secrets.SOLARMAN_APP_ID }}
           SOLARMAN_APP_SECRET: ${{ secrets.SOLARMAN_APP_SECRET }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: python poller.py
 
       - name: Commit updated state

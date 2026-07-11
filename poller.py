@@ -10,8 +10,8 @@ one of the 4 conditions crosses a threshold:
   - battery SOC drops to <=50% (discharging)
   - battery SOC reaches 100% (full)
 
-Notification delivery is a stub for now (notify() just prints) -
-swap that function out once a channel (Telegram/etc.) is chosen.
+Alerts are pushed via ntfy.sh (https://ntfy.sh/<topic>) - set NTFY_TOPIC
+to a private, unguessable topic name and subscribe to it in the ntfy app.
 
 Credentials come from environment variables so the exact same script
 runs unchanged locally (loaded from solarman_config.json, which is
@@ -137,9 +137,27 @@ def fetch_readings(creds):
     }
 
 
-def notify(message):
-    # Stub - swap for a real channel (Telegram/etc.) once that's decided.
+NTFY_SERVER = os.environ.get("NTFY_SERVER", "https://ntfy.sh")
+
+
+def notify(message, priority="default", tags=""):
     print(f"ALERT: {message}")
+
+    topic = os.environ.get("NTFY_TOPIC")
+    if not topic:
+        print("NTFY_TOPIC not set - skipping push notification.")
+        return
+
+    req = urllib.request.Request(
+        f"{NTFY_SERVER}/{topic}",
+        data=message.encode("utf-8"),
+        headers={"Title": "Solarman Alert", "Priority": priority, "Tags": tags},
+        method="POST",
+    )
+    try:
+        urllib.request.urlopen(req, timeout=10)
+    except urllib.error.URLError as e:
+        print(f"Failed to push ntfy notification: {e}")
 
 
 def load_state():
@@ -204,19 +222,19 @@ def main():
         return
 
     if old_state.get("grid_ok", True) and not grid_ok_new:
-        notify(f"Grid power is GONE (relay status: {readings['grid_status']})")
+        notify(f"Grid power is GONE (relay status: {readings['grid_status']})", priority="urgent", tags="rotating_light")
     elif not old_state.get("grid_ok", True) and grid_ok_new:
-        notify("Grid power RESTORED")
+        notify("Grid power RESTORED", priority="default", tags="white_check_mark")
 
     if old_voltage_ok and not voltage_ok_new:
-        notify(f"Low grid voltage: {voltage} V (below {LOW_VOLTAGE_TRIGGER} V)")
+        notify(f"Low grid voltage: {voltage} V (below {LOW_VOLTAGE_TRIGGER} V)", priority="high", tags="warning")
     elif not old_voltage_ok and voltage_ok_new:
-        notify(f"Grid voltage back to normal: {voltage} V")
+        notify(f"Grid voltage back to normal: {voltage} V", priority="default", tags="white_check_mark")
 
     if old_zone != "low" and new_zone == "low":
-        notify(f"Battery SOC dropped to {readings['battery_soc_pct']}% (<=50%)")
+        notify(f"Battery SOC dropped to {readings['battery_soc_pct']}% (<=50%)", priority="default", tags="battery")
     if old_zone != "full" and new_zone == "full":
-        notify("Battery fully charged (100%)")
+        notify("Battery fully charged (100%)", priority="default", tags="battery")
 
     save_state(new_state)
 
