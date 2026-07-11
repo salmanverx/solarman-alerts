@@ -1,7 +1,7 @@
 {
-  "grid_ok": true,
-  "grid_bad_streak": 0,
-  "voltage_ok": true,
-  "voltage_bad_streak": 0,
+  "grid_ok": false,
+  "grid_bad_streak": 2,
+  "voltage_ok": false,
+  "voltage_bad_streak": 2,
   "soc_zone": "normal"
 }
