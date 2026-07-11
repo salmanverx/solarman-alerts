@@ -195,6 +195,7 @@ def main():
         "voltage_ok": voltage_ok_new,
         "voltage_bad_streak": voltage_bad_streak,
         "soc_zone": new_zone,
+        "battery_soc_pct": readings["battery_soc_pct"],
     }
 
     if old_state is None:
