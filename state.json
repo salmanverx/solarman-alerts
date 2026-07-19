@@ -1,8 +1,8 @@
 {
-  "grid_ok": false,
-  "grid_bad_streak": 2,
+  "grid_ok": true,
+  "grid_bad_streak": 0,
   "voltage_ok": false,
-  "voltage_bad_streak": 2,
+  "voltage_bad_streak": 0,
   "soc_zone": "normal",
-  "battery_soc_pct": 73.0
+  "battery_soc_pct": 70.0
 }
