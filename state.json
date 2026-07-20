@@ -3,6 +3,6 @@
   "grid_bad_streak": 0,
   "voltage_ok": true,
   "voltage_bad_streak": 0,
-  "soc_zone": "normal",
-  "battery_soc_pct": 53.0
+  "soc_zone": "low",
+  "battery_soc_pct": 50.0
 }
