@@ -1,6 +1,6 @@
 {
   "grid_ok": true,
-  "grid_bad_streak": 0,
+  "grid_bad_streak": 1,
   "voltage_ok": true,
   "voltage_bad_streak": 0,
   "soc_zone": "low",
